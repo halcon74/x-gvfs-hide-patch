@@ -21,7 +21,7 @@ ISSUES FOUND BY GENTOO FORUM USERS
 5
 	volume = _g_unix_volume_new could leak the underlying object whenever the new code suppresses adding it to the list
 	fixed in the GDH-Gentoo's code -- stub
-6 CLOSED RESOLVED
+6 CLOSED IN PROCESS
 	don't need to use a memset then strcat -- just use strcpy
 	look at the printf family of functions
 	syslog functions take a 'printf'-style format string
