@@ -1,0 +1,47 @@
+CODING
+
+*
+	DURING ALL THE WORK:
+	https://developer.gnome.org/programming-guidelines/stable/c-coding-style.html.en
+1
+	should not declare a non-static function in a source file
+2
+	use __FILE__ and/or __LINE__ in openlog
+3
+	?: in one syslog instead of two syslogs
+	fixed in the GDH-Gentoo's code -- for volumes
+4
+	move the code inside if(volume) and if(mount)
+	fixed in the GDH-Gentoo's code -- for volumes
+5
+	strstr will suppress /home/me/variables too, not only /var
+6
+	volume = _g_unix_volume_new could leak the underlying object whenever the new code suppresses adding it to the list
+	fixed in the GDH-Gentoo's code -- stub
+7
+	don't need to use a memset then strcat -- just use strcpy
+	look at the printf family of functions
+	syslog functions take a 'printf'-style format string
+	fixed in the GDH-Gentoo's code -- for volumes
+8
+	const pointer to const char
+9
+	declare the loop counters in the for loops
+	fixed in the GDH-Gentoo's code -- for volumes
+10
+	move declarations of objects with automatic storage duration close to the the first place they are used
+	fixed in the GDH-Gentoo's code -- for volumes
+11
+	replace the hardcoded lists with reading a text file - the same /etc/fstab or other
+12
+	what could be moved to separate functions
+13
+	at the end again:
+	https://developer.gnome.org/programming-guidelines/stable/c-coding-style.html.en
+
+DEBUGGING
+
+1
+	try gdb
+2
+	try valgrind
