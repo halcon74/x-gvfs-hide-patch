@@ -43,3 +43,8 @@ DEBUGGING
 	try gdb
 2
 	try valgrind
+
+NOTES
+
+	135 lines /12 issues = 11,25 lines per issue.
+	o_O
