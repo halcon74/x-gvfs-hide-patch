@@ -5,8 +5,10 @@ CODING
 	https://developer.gnome.org/programming-guidelines/stable/c-coding-style.html.en
 1
 	should not declare a non-static function in a source file
+		see NOTE 2
 2
 	use __FILE__ and/or __LINE__ in openlog
+		see NOTE 2
 3
 	move the code inside if(volume) and if(mount)
 	fixed in the GDH-Gentoo's code -- for volumes
@@ -21,6 +23,7 @@ CODING
 	syslog functions take a 'printf'-style format string
 	?: in one syslog instead of two syslogs
 	fixed in the GDH-Gentoo's code -- for volumes
+		see NOTE 2
 7
 	const pointer to const char
 8
@@ -46,5 +49,16 @@ DEBUGGING
 
 NOTES
 
+1
 	135 lines /12 issues = 11,25 lines per issue.
 	o_O
+2
+	syslog is not used in glib logging
+	https://blog.gtk.org/2017/05/04/logging-and-more/
+g_log_structured (G_LOG_DOMAIN,
+                  G_LOG_LEVEL_DEBUG,
+                  "CODE_FILE", "mysource.c",
+                  "CODE_LINE", 312,
+                  "MESSSAGE_ID", "06d4df59e6c24647bfe69d2c27ef0b4e",
+                  "MESSAGE", "You have %d eggs", 12 + 2);
+	you can still use printf-style formatting for the MESSAGE field
