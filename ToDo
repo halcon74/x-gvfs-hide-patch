@@ -7,7 +7,7 @@ ISSUES FOUND BY GENTOO FORUM USERS
 *
 	DURING ALL THE WORK:
 	https://developer.gnome.org/programming-guidelines/stable/c-coding-style.html.en
-1 CLOSED WONTFIX
+1 CLOSED RESOLVED
 	should not declare a non-static function in a source file
 		see NOTE 2
 2 CLOSED RESOLVED
