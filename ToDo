@@ -59,7 +59,7 @@ ISSUES FOUND BY MY OWN
 NOTES
 
 1
-	135 lines /13 issues = 10,38 lines per issue.
+	135 (initial) lines /13 (coding) issues = 10,38 lines per issue.
 	o_O
 2
 	syslog is not used in glib logging
