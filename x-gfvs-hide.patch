@@ -1,0 +1,135 @@
+--- a/gio/gunixvolumemonitor.c	2020-08-18 14:05:22.000000000 +0300
++++ a/gio/gunixvolumemonitor.c	2020-10-18 04:13:37.183259013 +0300
+@@ -20,6 +20,12 @@
+  * Author: Alexander Larsson <alexl@redhat.com>
+  *         David Zeuthen <davidz@redhat.com>
+  */
++ 
++#include <syslog.h>
++
++void openlog(const char *ident, int option, int facility);
++void syslog (int priority, const char *format, ...);
++void closelog(void);
+ 
+ #include "config.h"
+ 
+@@ -321,6 +327,13 @@
+   GList *removed, *added;
+   GList *l;
+   GUnixVolume *volume;
++  const char *volume_name;
++  const char *user_forbidden_volumes[] = { "cdaudio", "cdrom", "shm", "tmp", "var", "sambadir1", "sambadir2" };
++  char logged_str_volume[101] = " ";
++  unsigned int loop_i_volume;
++  unsigned int found_user_forbidden_volume;
++
++  openlog("glib::gunixvolumemonitor.c::update_volumes", LOG_PID, LOG_USER);
+   
+   new_mountpoints = g_unix_mount_points_get (NULL);
+   
+@@ -349,19 +362,42 @@
+   for (l = added; l != NULL; l = l->next)
+     {
+       GUnixMountPoint *mountpoint = l->data;
+-      
++  
+       volume = _g_unix_volume_new (G_VOLUME_MONITOR (monitor), mountpoint);
+-      if (volume)
+-	{
+-	  monitor->volumes = g_list_prepend (monitor->volumes, volume);
+-	  g_signal_emit_by_name (monitor, "volume-added", volume);
++  
++      volume_name = g_volume_get_name (volume);
++  
++      found_user_forbidden_volume = 0;
++      for (loop_i_volume = 0; loop_i_volume < sizeof (user_forbidden_volumes) / sizeof (user_forbidden_volumes[0]); loop_i_volume++) {
++        if (strcmp (volume_name, user_forbidden_volumes[loop_i_volume]) == 0 ) {
++          found_user_forbidden_volume = 1;
++          memset (logged_str_volume, 0, sizeof (logged_str_volume));
++          strcat (logged_str_volume, "user forbidden volume_name: ");
++          strcat (logged_str_volume, volume_name);
++          syslog (LOG_EMERG, "%s", logged_str_volume);
++          break;
+ 	}
++      }
++  
++      if (found_user_forbidden_volume == 0) {
++        memset (logged_str_volume, 0, sizeof (logged_str_volume));
++        strcat (logged_str_volume, "user allowed volume_name: ");
++        strcat (logged_str_volume, volume_name);
++        syslog (LOG_EMERG, "%s", logged_str_volume);
++        if (volume)
++	  {
++	    monitor->volumes = g_list_prepend (monitor->volumes, volume);
++	    g_signal_emit_by_name (monitor, "volume-added", volume);
++	  }
++      }
+     }
+   
+   g_list_free (added);
+   g_list_free (removed);
+   g_list_free_full (monitor->last_mountpoints, (GDestroyNotify) g_unix_mount_point_free);
+   monitor->last_mountpoints = new_mountpoints;
++  
++  closelog();
+ }
+ 
+ static void
+@@ -373,6 +409,12 @@
+   GUnixMount *mount;
+   GUnixVolume *volume;
+   const char *mount_path;
++  const char *user_forbidden_mounts[] = { "/dev", "/tmp", "/var" };
++  char logged_str_mount[101] = " ";
++  unsigned int loop_i_mount;
++  unsigned int found_user_forbidden_mount;
++  
++  openlog("glib::gunixvolumemonitor.c::update_mounts", LOG_PID, LOG_USER);
+   
+   new_mounts = g_unix_mounts_get (NULL);
+   
+@@ -403,17 +445,37 @@
+ 
+       mount_path = g_unix_mount_get_mount_path (mount_entry);
+       
+-      volume = _g_unix_volume_monitor_lookup_volume_for_mount_path (monitor, mount_path);
+-      mount = _g_unix_mount_new (G_VOLUME_MONITOR (monitor), mount_entry, volume);
+-      if (mount)
+-	{
+-	  monitor->mounts = g_list_prepend (monitor->mounts, mount);
+-	  g_signal_emit_by_name (monitor, "mount-added", mount);
++      found_user_forbidden_mount = 0;
++      for (loop_i_mount = 0; loop_i_mount < sizeof (user_forbidden_mounts) / sizeof (user_forbidden_mounts[0]); loop_i_mount++) {
++        if (strstr (mount_path, user_forbidden_mounts[loop_i_mount]) != NULL) {
++          found_user_forbidden_mount = 1;
++          memset (logged_str_mount, 0, sizeof (logged_str_mount));
++          strcat (logged_str_mount, "user forbidden mount_path: ");
++          strcat (logged_str_mount, mount_path);
++          syslog (LOG_EMERG, "%s", logged_str_mount);
++          break;
+ 	}
+-    }
++      }
++      
++      if (found_user_forbidden_mount == 0) {
++        memset (logged_str_mount, 0, sizeof (logged_str_mount));
++        strcat (logged_str_mount, "user allowed mount_path: ");
++        strcat (logged_str_mount, mount_path);
++        syslog (LOG_EMERG, "%s", logged_str_mount);
++        volume = _g_unix_volume_monitor_lookup_volume_for_mount_path (monitor, mount_path);
++        mount = _g_unix_mount_new (G_VOLUME_MONITOR (monitor), mount_entry, volume);
++        if (mount)
++	  {
++	    monitor->mounts = g_list_prepend (monitor->mounts, mount);
++	    g_signal_emit_by_name (monitor, "mount-added", mount);
++	  }
++        }
++      }
+   
+   g_list_free (added);
+   g_list_free (removed);
+   g_list_free_full (monitor->last_mounts, (GDestroyNotify) g_unix_mount_free);
+   monitor->last_mounts = new_mounts;
++  
++  closelog();
+ }
