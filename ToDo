@@ -64,7 +64,7 @@ DEBUGGING
 NOTES
 
 1
-	135 lines /12 issues = 11,25 lines per issue.
+	135 lines /13 issues = 10,38 lines per issue.
 	o_O
 2
 	syslog is not used in glib logging
