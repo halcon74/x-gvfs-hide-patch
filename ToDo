@@ -26,7 +26,7 @@ ISSUES FOUND BY GENTOO FORUM USERS
 	?: in one syslog instead of two syslogs
 	fixed in the GDH-Gentoo's code -- for volumes
 		see NOTE 2
-7
+7 CLOSED RESOLVED
 	const pointer to const char
 8 CLOSED RESOLVED
 	declare the loop counters in the for loops

@@ -1,11 +1,11 @@
 --- a/gio/gunixvolumemonitor.c	2020-10-20 13:35:40.109656261 +0300
-+++ a/gio/gunixvolumemonitor.c	2020-10-20 23:22:54.675563545 +0300
++++ a/gio/gunixvolumemonitor.c	2020-10-21 00:48:43.657051343 +0300
 @@ -321,6 +321,9 @@
    GList *removed, *added;
    GList *l;
    GUnixVolume *volume;
 +  const char *volume_name;
-+  const char *user_forbidden_volumes[] = { "cdaudio", "cdrom", "shm", "tmp", "var", "sambadir1", "sambadir2" };
++  static const char *const user_forbidden_volumes[] = { "cdaudio", "cdrom", "shm", "tmp", "var", "sambadir1", "sambadir2" };
 +  unsigned int found_user_forbidden_volume;
    
    new_mountpoints = g_unix_mount_points_get (NULL);
@@ -45,7 +45,7 @@
    GUnixMount *mount;
    GUnixVolume *volume;
    const char *mount_path;
-+  const char *user_forbidden_mounts[] = { "/dev", "/tmp", "/var" };
++  static const char *const user_forbidden_mounts[] = { "/dev", "/tmp", "/var" };
 +  char mount_concat[255];
 +  unsigned int *mount_concat_strlen;
 +  unsigned int found_user_forbidden_mount;
