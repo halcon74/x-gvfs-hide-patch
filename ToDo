@@ -93,4 +93,4 @@ g_log_structured (G_LOG_DOMAIN,
 4
 	I think, the code that forbids mounts should not be removed even if forbidding mounts seems useless - for purposes of glib lists consistency
 	For the same purposes, I think, there should be only one forbidding list -- for example, of forbidden mount paths; volume names should be derived from it
-	So far was lazy to look how that (deriving) is made in glib
+	So far been lazy to look how that (deriving) is made in glib
