@@ -11,7 +11,7 @@ ISSUES FOUND BY GENTOO FORUM USERS
 2 CLOSED RESOLVED
 	use __FILE__ and/or __LINE__ in openlog
 		see NOTE 2
-3
+3 CLOSED RESOLVED
 	move the code inside if(volume) and if(mount)
 	fixed in the GDH-Gentoo's code -- for volumes
 4
@@ -19,7 +19,7 @@ ISSUES FOUND BY GENTOO FORUM USERS
 5
 	volume = _g_unix_volume_new could leak the underlying object whenever the new code suppresses adding it to the list
 	fixed in the GDH-Gentoo's code -- stub
-6 IN PROCESS
+6 CLOSED RESOLVED
 	don't need to use a memset then strcat -- just use strcpy
 	look at the printf family of functions
 	syslog functions take a 'printf'-style format string
@@ -28,16 +28,18 @@ ISSUES FOUND BY GENTOO FORUM USERS
 		see NOTE 2
 7
 	const pointer to const char
-8
+8 CLOSED RESOLVED
 	declare the loop counters in the for loops
 	fixed in the GDH-Gentoo's code -- for volumes
-9
-	move declarations of objects with automatic storage duration close to the the first place they are used
+9 CLOSED WONTFIX?
+	move declarations of objects with automatic storage duration close to the first place they are used
 	fixed in the GDH-Gentoo's code -- for volumes
+		see NOTE 3
 10
 	replace the hardcoded lists with reading a text file - the same /etc/fstab or other
 11
-	what could be moved to separate functions
+	what could be moved to separate functions?
+	g_log?
 12
 	at the end again:
 	https://developer.gnome.org/programming-guidelines/stable/c-coding-style.html.en
@@ -71,3 +73,5 @@ g_log_structured (G_LOG_DOMAIN,
                   "MESSSAGE_ID", "06d4df59e6c24647bfe69d2c27ef0b4e",
                   "MESSAGE", "You have %d eggs", 12 + 2);
 	you can still use printf-style formatting for the MESSAGE field
+3
+	ISO C90 forbids mixed declarations and code

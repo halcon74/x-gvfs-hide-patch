@@ -1,91 +1,93 @@
---- a/gio/gunixvolumemonitor.c	2020-08-18 14:05:22.000000000 +0300
-+++ a/gio/gunixvolumemonitor.c	2020-10-20 02:09:29.229573276 +0300
-@@ -321,6 +321,10 @@
+--- a/gio/gunixvolumemonitor.c	2020-10-20 13:35:40.109656261 +0300
++++ a/gio/gunixvolumemonitor.c	2020-10-20 14:44:38.950874286 +0300
+@@ -321,6 +321,9 @@
    GList *removed, *added;
    GList *l;
    GUnixVolume *volume;
 +  const char *volume_name;
 +  const char *user_forbidden_volumes[] = { "cdaudio", "cdrom", "shm", "tmp", "var", "sambadir1", "sambadir2" };
-+  unsigned int loop_i_volume;
 +  unsigned int found_user_forbidden_volume;
    
    new_mountpoints = g_unix_mount_points_get (NULL);
    
-@@ -349,13 +353,28 @@
+@@ -349,13 +352,29 @@
    for (l = added; l != NULL; l = l->next)
      {
        GUnixMountPoint *mountpoint = l->data;
 -      
 +  
        volume = _g_unix_volume_new (G_VOLUME_MONITOR (monitor), mountpoint);
--      if (volume)
+       if (volume)
 -	{
 -	  monitor->volumes = g_list_prepend (monitor->volumes, volume);
 -	  g_signal_emit_by_name (monitor, "volume-added", volume);
-+  
-+      volume_name = g_unix_mount_point_guess_name (mountpoint);
-+  
-+      found_user_forbidden_volume = 0;
-+      for (loop_i_volume = 0; loop_i_volume < sizeof (user_forbidden_volumes) / sizeof (user_forbidden_volumes[0]); loop_i_volume++) {
-+        if (strcmp (volume_name, user_forbidden_volumes[loop_i_volume]) == 0 ) {
-+          found_user_forbidden_volume = 1;
-+          g_log ("x-gvfs-hide-patch.test", G_LOG_LEVEL_WARNING, "CODE_FILE %s[%u]:user forbidden volume_name: %s", __FILE__, __LINE__, volume_name);
-+          break;
- 	}
-+      }
-+  
-+      if (found_user_forbidden_volume == 0) {
-+        g_log ("x-gvfs-hide-patch.test", G_LOG_LEVEL_WARNING, "CODE_FILE %s[%u]:user allowed volume_name: %s", __FILE__, __LINE__, volume_name);
-+        if (volume)
-+	  {
-+	    monitor->volumes = g_list_prepend (monitor->volumes, volume);
-+	    g_signal_emit_by_name (monitor, "volume-added", volume);
-+	  }
-+      }
+-	}
++        {
++          volume_name = g_unix_mount_point_guess_name (mountpoint);
++          found_user_forbidden_volume = 0;
++          for (unsigned int loop_i_volume = 0; loop_i_volume < sizeof (user_forbidden_volumes) / sizeof (user_forbidden_volumes[0]); loop_i_volume++)
++            if (strcmp (volume_name, user_forbidden_volumes[loop_i_volume]) == 0)
++              found_user_forbidden_volume = 1;
++          
++          g_log ("x-gvfs-hide-patch.test", G_LOG_LEVEL_WARNING, "CODE_FILE %s[%u]:user %s volume_name: %s", __FILE__, __LINE__, found_user_forbidden_volume? "forbidden": "allowed", volume_name);
++          
++          if (found_user_forbidden_volume)
++            // Free the resources that _g_unix_volume_new() might have allocated. 
++            {
++            }
++          else
++            // Do whatever the unpatched code does. 
++            {
++              monitor->volumes = g_list_prepend (monitor->volumes, volume);
++              g_signal_emit_by_name (monitor, "volume-added", volume);
++            }
++        }
      }
    
    g_list_free (added);
-@@ -373,6 +392,9 @@
+@@ -373,6 +392,8 @@
    GUnixMount *mount;
    GUnixVolume *volume;
    const char *mount_path;
 +  const char *user_forbidden_mounts[] = { "/dev", "/tmp", "/var" };
-+  unsigned int loop_i_mount;
 +  unsigned int found_user_forbidden_mount;
    
    new_mounts = g_unix_mounts_get (NULL);
    
-@@ -403,14 +425,26 @@
- 
+@@ -400,16 +421,31 @@
+   for (l = added; l != NULL; l = l->next)
+     {
+       GUnixMountEntry *mount_entry = l->data;
+-
++      
        mount_path = g_unix_mount_get_mount_path (mount_entry);
        
--      volume = _g_unix_volume_monitor_lookup_volume_for_mount_path (monitor, mount_path);
--      mount = _g_unix_mount_new (G_VOLUME_MONITOR (monitor), mount_entry, volume);
--      if (mount)
+       volume = _g_unix_volume_monitor_lookup_volume_for_mount_path (monitor, mount_path);
+       mount = _g_unix_mount_new (G_VOLUME_MONITOR (monitor), mount_entry, volume);
+       if (mount)
 -	{
 -	  monitor->mounts = g_list_prepend (monitor->mounts, mount);
 -	  g_signal_emit_by_name (monitor, "mount-added", mount);
-+      found_user_forbidden_mount = 0;
-+      for (loop_i_mount = 0; loop_i_mount < sizeof (user_forbidden_mounts) / sizeof (user_forbidden_mounts[0]); loop_i_mount++) {
-+        if (strstr (mount_path, user_forbidden_mounts[loop_i_mount]) != NULL) {
-+          found_user_forbidden_mount = 1;
-+          g_log ("x-gvfs-hide-patch.test", G_LOG_LEVEL_WARNING, "CODE_FILE %s[%u]:user forbidden mount_path: %s", __FILE__, __LINE__, mount_path);
-+          break;
- 	}
--    }
-+      }
-+      
-+      if (found_user_forbidden_mount == 0) {
-+        g_log ("x-gvfs-hide-patch.test", G_LOG_LEVEL_WARNING, "CODE_FILE %s[%u]:user allowed mount_path: %s", __FILE__, __LINE__, mount_path);
-+        volume = _g_unix_volume_monitor_lookup_volume_for_mount_path (monitor, mount_path);
-+        mount = _g_unix_mount_new (G_VOLUME_MONITOR (monitor), mount_entry, volume);
-+        if (mount)
-+	  {
-+	    monitor->mounts = g_list_prepend (monitor->mounts, mount);
-+	    g_signal_emit_by_name (monitor, "mount-added", mount);
+-	}
++        {
++          found_user_forbidden_mount = 0;
++          for (unsigned int loop_i_mount = 0; loop_i_mount < sizeof (user_forbidden_mounts) / sizeof (user_forbidden_mounts[0]); loop_i_mount++)
++            if (strstr (mount_path, user_forbidden_mounts[loop_i_mount]) != NULL)
++              found_user_forbidden_mount = 1;
++          
++          g_log ("x-gvfs-hide-patch.test", G_LOG_LEVEL_WARNING, "CODE_FILE %s[%u]:user %s mount_path: %s", __FILE__, __LINE__, found_user_forbidden_mount? "forbidden": "allowed", mount_path);
++          
++          if (found_user_forbidden_mount == 0)
++            // Free the resources that _g_unix_volume_new() might have allocated. 
++            {
++            }
++          else
++            // Do whatever the unpatched code does. 
++            {
++              monitor->mounts = g_list_prepend (monitor->mounts, mount);
++              g_signal_emit_by_name (monitor, "mount-added", mount);
++            }
 +	  }
-+        }
-+      }
+     }
    
    g_list_free (added);
-   g_list_free (removed);
