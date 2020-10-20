@@ -71,8 +71,8 @@ ISSUES FOUND BY MY OWN
 NOTES
 
 1
-	135 (initial) lines /13 (coding) issues = 10,38 lines per issue.
-	o_O
+	135 (initial) lines /14 (coding) issues = 9,64 lines per issue.
+	o_O perhaps I delete this calculation
 2
 	syslog is not used in glib logging
 	https://blog.gtk.org/2017/05/04/logging-and-more/
