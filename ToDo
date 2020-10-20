@@ -58,7 +58,7 @@ ISSUES FOUND BY MY OWN
 	sometimes leads to compile error
 	expected GVolume aka struct _GVolume but argument is of type GUnixVolume aka struct _GUnixVolume
 	was not found earlier because arises _sometimes_
-16
+16 CLOSED INVALID
 	forbidding mounts seems to be useless:
 	
 	if a volume is not mounted
@@ -67,6 +67,11 @@ ISSUES FOUND BY MY OWN
 		its path is passed to mounts, but
 		if the corresponding volume name is not forbidden
 			the mount is displayed in the dialogue anyway
+	
+		See NOTE 4
+17
+	Replace two forbidding lists with one
+		See NOTE 4
 
 NOTES
 
@@ -85,3 +90,7 @@ g_log_structured (G_LOG_DOMAIN,
 	you can still use printf-style formatting for the MESSAGE field
 3
 	ISO C90 forbids mixed declarations and code
+4
+	I think, the code that forbids mounts should not be removed even if forbidding mounts seems useless - for purposes of glib lists consistency
+	For the same purposes, I think, there should be only one forbidding list -- for example, of forbidden mount paths; volume names should be derived from it
+	So far was lazy to look how that (deriving) is made in glib
