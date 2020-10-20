@@ -1,5 +1,5 @@
 --- a/gio/gunixvolumemonitor.c	2020-10-20 13:35:40.109656261 +0300
-+++ a/gio/gunixvolumemonitor.c	2020-10-20 14:57:22.938879098 +0300
++++ a/gio/gunixvolumemonitor.c	2020-10-20 23:22:54.675563545 +0300
 @@ -321,6 +321,9 @@
    GList *removed, *added;
    GList *l;
@@ -41,16 +41,18 @@
      }
    
    g_list_free (added);
-@@ -373,6 +392,8 @@
+@@ -373,6 +392,10 @@
    GUnixMount *mount;
    GUnixVolume *volume;
    const char *mount_path;
 +  const char *user_forbidden_mounts[] = { "/dev", "/tmp", "/var" };
++  char mount_concat[255];
++  unsigned int *mount_concat_strlen;
 +  unsigned int found_user_forbidden_mount;
    
    new_mounts = g_unix_mounts_get (NULL);
    
-@@ -400,16 +421,31 @@
+@@ -400,16 +423,40 @@
    for (l = added; l != NULL; l = l->next)
      {
        GUnixMountEntry *mount_entry = l->data;
@@ -68,8 +70,17 @@
 +        {
 +          found_user_forbidden_mount = 0;
 +          for (unsigned int loop_i_mount = 0; loop_i_mount < sizeof (user_forbidden_mounts) / sizeof (user_forbidden_mounts[0]); loop_i_mount++)
-+            if (strstr (mount_path, user_forbidden_mounts[loop_i_mount]) != NULL)
-+              found_user_forbidden_mount = 1;
++            {
++              if (strcmp (user_forbidden_mounts[loop_i_mount], "") == 0 || strcmp (user_forbidden_mounts[loop_i_mount], "/") == 0)
++              {
++                g_log ("x-gvfs-hide-patch.test", G_LOG_LEVEL_WARNING, "CODE_FILE %s[%u]:wrong value of user forbidden mount_path: %s", __FILE__, __LINE__, user_forbidden_mounts[loop_i_mount]);
++                break;
++              }
++              strcat (strcpy (mount_concat, user_forbidden_mounts[loop_i_mount]), "/");
++              mount_concat_strlen = strlen (mount_concat);
++              if (strcmp (mount_path, user_forbidden_mounts[loop_i_mount]) == 0 || strncmp (mount_path, mount_concat, mount_concat_strlen) == 0)
++                found_user_forbidden_mount = 1;
++            }
 +          
 +          g_log ("x-gvfs-hide-patch.test", G_LOG_LEVEL_WARNING, "CODE_FILE %s[%u]:user %s mount_path: %s", __FILE__, __LINE__, found_user_forbidden_mount? "forbidden": "allowed", mount_path);
 +          

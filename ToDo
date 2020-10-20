@@ -14,7 +14,7 @@ ISSUES FOUND BY GENTOO FORUM USERS
 3 CLOSED RESOLVED
 	move the code inside if(volume) and if(mount)
 	fixed in the GDH-Gentoo's code -- for volumes
-4
+4 CLOSED RESOLVED
 	strstr will suppress /home/me/variables too, not only /var
 5
 	volume = _g_unix_volume_new could leak the underlying object whenever the new code suppresses adding it to the list
@@ -40,6 +40,7 @@ ISSUES FOUND BY GENTOO FORUM USERS
 11
 	what could be moved to separate functions?
 	g_log?
+	work with strings for mounts?
 12
 	at the end again:
 	https://developer.gnome.org/programming-guidelines/stable/c-coding-style.html.en
@@ -57,6 +58,15 @@ ISSUES FOUND BY MY OWN
 	sometimes leads to compile error
 	expected GVolume aka struct _GVolume but argument is of type GUnixVolume aka struct _GUnixVolume
 	was not found earlier because arises _sometimes_
+16
+	forbidding mounts seems to be useless:
+	
+	if a volume is not mounted
+		its path is not passed to mounts
+	if a volume is mounted
+		its path is passed to mounts, but
+		if the corresponding volume name is not forbidden
+			the mount is displayed in the dialogue anyway
 
 NOTES
 
