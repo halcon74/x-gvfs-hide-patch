@@ -73,7 +73,7 @@
 +          
 +          g_log ("x-gvfs-hide-patch.test", G_LOG_LEVEL_WARNING, "CODE_FILE %s[%u]:user %s mount_path: %s", __FILE__, __LINE__, found_user_forbidden_mount? "forbidden": "allowed", mount_path);
 +          
-+          if (found_user_forbidden_mount == 0)
++          if (found_user_forbidden_mount)
 +            // Free the resources that _g_unix_mount_new() might have allocated. 
 +            {
 +            }
