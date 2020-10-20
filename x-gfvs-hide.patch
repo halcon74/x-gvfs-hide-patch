@@ -1,5 +1,5 @@
 --- a/gio/gunixvolumemonitor.c	2020-10-20 13:35:40.109656261 +0300
-+++ a/gio/gunixvolumemonitor.c	2020-10-20 14:44:38.950874286 +0300
++++ a/gio/gunixvolumemonitor.c	2020-10-20 14:57:22.938879098 +0300
 @@ -321,6 +321,9 @@
    GList *removed, *added;
    GList *l;
@@ -10,12 +10,8 @@
    
    new_mountpoints = g_unix_mount_points_get (NULL);
    
-@@ -349,13 +352,29 @@
-   for (l = added; l != NULL; l = l->next)
-     {
-       GUnixMountPoint *mountpoint = l->data;
--      
-+  
+@@ -352,10 +355,26 @@
+       
        volume = _g_unix_volume_new (G_VOLUME_MONITOR (monitor), mountpoint);
        if (volume)
 -	{
@@ -78,7 +74,7 @@
 +          g_log ("x-gvfs-hide-patch.test", G_LOG_LEVEL_WARNING, "CODE_FILE %s[%u]:user %s mount_path: %s", __FILE__, __LINE__, found_user_forbidden_mount? "forbidden": "allowed", mount_path);
 +          
 +          if (found_user_forbidden_mount == 0)
-+            // Free the resources that _g_unix_volume_new() might have allocated. 
++            // Free the resources that _g_unix_mount_new() might have allocated. 
 +            {
 +            }
 +          else
