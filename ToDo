@@ -115,4 +115,3 @@ g_filename_display_basename (const gchar *filename)
   g_free (basename);
   return display_name;
 }
-	

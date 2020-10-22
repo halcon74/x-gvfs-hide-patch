@@ -1,5 +1,5 @@
 --- a/gio/gunixvolumemonitor.c	2020-10-20 13:35:40.109656261 +0300
-+++ a/gio/gunixvolumemonitor.c	2020-10-21 00:48:43.657051343 +0300
++++ b/gio/gunixvolumemonitor.c	2020-10-21 00:48:43.657051343 +0300
 @@ -321,6 +321,9 @@
    GList *removed, *added;
    GList *l;
