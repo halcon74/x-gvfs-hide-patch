@@ -31,23 +31,24 @@ ISSUES FOUND BY GENTOO FORUM USERS
 8 CLOSED RESOLVED
 	declare the loop counters in the for loops
 	fixed in the GDH-Gentoo's code -- for volumes
-9 CLOSED WONTFIX?
+9 CLOSED WONTFIX
 	move declarations of objects with automatic storage duration close to the first place they are used
 	fixed in the GDH-Gentoo's code -- for volumes
 		see NOTE 3
-10
+10 CLOSED RESOLVED
 	replace the hardcoded lists with reading a text file - the same /etc/fstab or other
 11
 	what could be moved to separate functions?
 	g_log?
-	work with strings for mounts?
 12
 	at the end again:
 	https://developer.gnome.org/programming-guidelines/stable/c-coding-style.html.en
-13
+13 IN PROGRESS
 	try gdb
-14
+		see NOTE 5
+14 IN PROGRESS
 	try valgrind
+		see NOTE 6
 	
 ======================
 ISSUES FOUND BY MY OWN
@@ -69,7 +70,7 @@ ISSUES FOUND BY MY OWN
 			the mount is displayed in the dialogue anyway
 	
 		see NOTE 4
-17
+17 CLOSED RESOLVED
 	replace two forbidding lists with one
 		see NOTE 4
 
@@ -95,13 +96,13 @@ g_log_structured (G_LOG_DOMAIN,
 	For the same purposes, I think, there should be only one forbidding list -- for example, of forbidden mount paths; volume names should be derived from it
 	How that (deriving) is made in glib:
 	
-	gunixvolume.c::_g_unix_volume_new:
+	gio/gunixvolume.c::_g_unix_volume_new:
 	volume->name = g_unix_mount_point_guess_name (mountpoint);
 	
-	gunixmount.c::g_unix_mount_point_guess_name:
+	gio/gunixmounts.c::g_unix_mount_point_guess_name:
 	name = g_filename_display_basename (mount_point->mount_path);
 	
-	gconvert.c::
+	glib/gconvert.c::
 gchar *
 g_filename_display_basename (const gchar *filename)
 {
@@ -115,3 +116,9 @@ g_filename_display_basename (const gchar *filename)
   g_free (basename);
   return display_name;
 }
+5
+	I've used gdb for the standalone pass-ptr...
+	But how to use gdb for the final glib binary?
+6
+	I've used valgrind for the standalone pass-ptr...
+	But how to use valgrind for the final glib binary?
