@@ -73,9 +73,10 @@ ISSUES FOUND BY MY OWN
 17 CLOSED RESOLVED
 	replace two forbidding lists with one
 		see NOTE 4
-18
+18 CLOSED INVALID
 	CODE_FILE ../glib-2.64.5/gio/gunixvolumemonitor.c[503]:user allowed volume_name: ?????? ???????? ???????
 	?????? ???????? ??????? - it's "Filesystem root" in Russian
+		see NOTE 7
 19
 	Forbidden volumes seem NOT to be passed to mounts... Again: does it make sense to forbid mounts? :)
 
@@ -126,3 +127,5 @@ g_filename_display_basename (const gchar *filename)
 6
 	I've used valgrind for the standalone pass-ptr...
 	But how to use valgrind for the final glib binary?
+7
+	It's an issue of terminal, not of the program

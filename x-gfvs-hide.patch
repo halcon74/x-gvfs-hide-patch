@@ -1,5 +1,5 @@
---- a/gio/gunixvolumemonitor.c	2020-11-04 00:14:13.616476738 +0300
-+++ b/gio/gunixvolumemonitor.c	2020-11-04 01:12:49.498560222 +0300
+--- a/gio/gunixvolumemonitor.c	2020-11-04 00:14:13.000000000 +0300
++++ b/gio/gunixvolumemonitor.c	2020-11-04 23:38:59.411155244 +0300
 @@ -35,6 +35,10 @@
  #include "giomodule.h"
  #include "glibintl.h"
@@ -262,8 +262,8 @@
      }
    
    g_list_free (added);
---- a/gio/gunixmounts.h	2020-11-04 01:33:38.994289855 +0300
-+++ b/gio/gunixmounts.h	2020-11-04 01:33:05.195287219 +0300
+--- a/gio/gunixmounts.h	2020-11-04 01:33:38.000000000 +0300
++++ b/gio/gunixmounts.h	2020-11-04 01:37:00.000000000 +0300
 @@ -64,6 +64,8 @@
  #define G_IS_UNIX_MOUNT_MONITOR_CLASS(k) (G_TYPE_CHECK_CLASS_TYPE ((k), G_TYPE_UNIX_MOUNT_MONITOR))
  G_DEFINE_AUTOPTR_CLEANUP_FUNC(GUnixMountMonitor, g_object_unref)
@@ -273,8 +273,8 @@
  GLIB_AVAILABLE_IN_ALL
  void           g_unix_mount_free                    (GUnixMountEntry    *mount_entry);
  GLIB_AVAILABLE_IN_2_54
---- a/gio/gunixmounts.c	2020-11-04 01:38:57.986314730 +0300
-+++ b/gio/gunixmounts.c	2020-11-04 01:37:49.350309378 +0300
+--- a/gio/gunixmounts.c	2020-11-04 01:38:57.000000000 +0300
++++ b/gio/gunixmounts.c	2020-11-04 01:37:49.000000000 +0300
 @@ -968,7 +968,7 @@
   * don't return swap and ignore mounts.
   */
