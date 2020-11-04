@@ -37,10 +37,11 @@ ISSUES FOUND BY GENTOO FORUM USERS
 		see NOTE 3
 10 CLOSED RESOLVED
 	replace the hardcoded lists with reading a text file - the same /etc/fstab or other
-11
+11 CLOSED RESOLVED
 	what could be moved to separate functions?
 	g_log?
-12
+		see NOTE 9
+12 CLOSED RESOLVED
 	at the end again:
 	https://developer.gnome.org/programming-guidelines/stable/c-coding-style.html.en
 13 IN PROGRESS
@@ -134,3 +135,5 @@ g_filename_display_basename (const gchar *filename)
 	It does not make sense to forbid mounts, for two reasons:
 		- if a volume is forbidden, it is never passed to mounts
 		- mounts include folders mounted without /etc/fstab (manually)
+9
+	I think moving g_log with the repeating arguments to a separate function is not worth it...
