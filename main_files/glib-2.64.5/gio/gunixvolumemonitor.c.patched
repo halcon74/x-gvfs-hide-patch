@@ -332,7 +332,7 @@ read_forbidden_mounts (char **array,
   struct mntent *mntent;
   char *mount_path;
   unsigned int loop_i_mount = 0;
-  unsigned int failed_el_index = UINT_MAX;// if an element fails to allocate memory, this variable will contain its index (>=0)
+  unsigned int failed_el_index = UINT_MAX;// if an element fails to allocate memory, this variable will contain its index
   unsigned int max_ptr_length = *ptr_length;
   
   *ptr_length = 0;
@@ -391,7 +391,7 @@ read_forbidden_volumes (char **array,
 {
   unsigned int length;
   char *name;
-  unsigned int failed_el_index = UINT_MAX;// if an element fails to allocate memory, this variable will contain its index (>=0)
+  unsigned int failed_el_index = UINT_MAX;// if an element fails to allocate memory, this variable will contain its index
   
   if (read_forbidden_mounts (array, ptr_length) == 0)
     {
@@ -496,11 +496,13 @@ update_volumes (GUnixVolumeMonitor *monitor)
             }
           
           if (found_user_forbidden_volume)
-            // Free the resources that _g_unix_volume_new() might have allocated. 
+            // Free the resources that _g_unix_volume_new () allocated
             {
+              _g_unix_volume_disconnected (volume);
+              g_object_unref (volume);
             }
           else
-            // Do whatever the unpatched code does. 
+            // Do whatever the unpatched code does
             {
               monitor->volumes = g_list_prepend (monitor->volumes, volume);
               g_signal_emit_by_name (monitor, "volume-added", volume);

@@ -16,7 +16,7 @@ ISSUES FOUND BY GENTOO FORUM USERS
 	fixed in the GDH-Gentoo's code -- for volumes
 4 CLOSED RESOLVED
 	strstr will suppress /home/me/variables too, not only /var
-5
+5 CLOSED RESOLVED
 	volume = _g_unix_volume_new could leak the underlying object whenever the new code suppresses adding it to the list
 	fixed in the GDH-Gentoo's code -- stub
 6 CLOSED RESOLVED

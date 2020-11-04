@@ -1,5 +1,5 @@
 --- a/gio/gunixvolumemonitor.c	2020-11-04 00:14:13.000000000 +0300
-+++ b/gio/gunixvolumemonitor.c	2020-11-05 00:09:00.367988033 +0300
++++ b/gio/gunixvolumemonitor.c	2020-11-05 00:44:24.700751949 +0300
 @@ -35,6 +35,10 @@
  #include "giomodule.h"
  #include "glibintl.h"
@@ -36,7 +36,7 @@
 +  struct mntent *mntent;
 +  char *mount_path;
 +  unsigned int loop_i_mount = 0;
-+  unsigned int failed_el_index = UINT_MAX;// if an element fails to allocate memory, this variable will contain its index (>=0)
++  unsigned int failed_el_index = UINT_MAX;// if an element fails to allocate memory, this variable will contain its index
 +  unsigned int max_ptr_length = *ptr_length;
 +  
 +  *ptr_length = 0;
@@ -95,7 +95,7 @@
 +{
 +  unsigned int length;
 +  char *name;
-+  unsigned int failed_el_index = UINT_MAX;// if an element fails to allocate memory, this variable will contain its index (>=0)
++  unsigned int failed_el_index = UINT_MAX;// if an element fails to allocate memory, this variable will contain its index
 +  
 +  if (read_forbidden_mounts (array, ptr_length) == 0)
 +    {
@@ -150,7 +150,7 @@
    
    new_mountpoints = g_unix_mount_points_get (NULL);
    
-@@ -352,10 +474,38 @@
+@@ -352,10 +474,40 @@
        
        volume = _g_unix_volume_new (G_VOLUME_MONITOR (monitor), mountpoint);
        if (volume)
@@ -180,11 +180,13 @@
 +            }
 +          
 +          if (found_user_forbidden_volume)
-+            // Free the resources that _g_unix_volume_new() might have allocated. 
++            // Free the resources that _g_unix_volume_new () allocated
 +            {
++              _g_unix_volume_disconnected (volume);
++              g_object_unref (volume);
 +            }
 +          else
-+            // Do whatever the unpatched code does. 
++            // Do whatever the unpatched code does
 +            {
 +              monitor->volumes = g_list_prepend (monitor->volumes, volume);
 +              g_signal_emit_by_name (monitor, "volume-added", volume);
