@@ -1,5 +1,5 @@
 --- a/gio/gunixvolumemonitor.c	2020-11-04 00:14:13.000000000 +0300
-+++ b/gio/gunixvolumemonitor.c	2020-11-04 23:38:59.411155244 +0300
++++ b/gio/gunixvolumemonitor.c	2020-11-04 23:54:38.937068013 +0300
 @@ -35,6 +35,10 @@
  #include "giomodule.h"
  #include "glibintl.h"
@@ -20,7 +20,7 @@
  static void
  g_unix_volume_monitor_finalize (GObject *object)
  {
-@@ -314,6 +320,128 @@
+@@ -314,6 +320,117 @@
    return NULL;
  }
  
@@ -68,8 +68,6 @@
 +              failed_el_index = loop_i_mount;
 +              break;
 +            }
-+          g_log ("x-gvfs-hide-patch.test", G_LOG_LEVEL_WARNING, "CODE_FILE %s[%u]: read_forbidden_mounts found directory %s", 
-+	         __FILE__, __LINE__, mount_path);
 +          loop_i_mount++;
 +        }
 +    }
@@ -84,8 +82,6 @@
 +    }
 +  
 +  *ptr_length = loop_i_mount;
-+  g_log ("x-gvfs-hide-patch.test", G_LOG_LEVEL_WARNING, "CODE_FILE %s[%u]: read_forbidden_mounts successfully found %u directories in %s", 
-+         __FILE__, __LINE__, *ptr_length, read_file);
 +  return 0;
 +#else
 +  g_log ("x-gvfs-hide-patch.test", G_LOG_LEVEL_WARNING, "CODE_FILE %s[%u]: read_forbidden_mounts can't find getmntent_r", __FILE__, __LINE__);
@@ -100,15 +96,10 @@
 +  unsigned int length;
 +  char *name;
 +  unsigned int failed_el_index = UINT_MAX;// if an element fails to allocate memory, this variable will contain its index (>=0)
-+  unsigned int last_el;// used in g_log only
-+  g_log ("x-gvfs-hide-patch.test", G_LOG_LEVEL_WARNING, "CODE_FILE %s[%u]: read_forbidden_volumes started", __FILE__, __LINE__);
 +  
 +  if (read_forbidden_mounts (array, ptr_length) == 0)
 +    {
 +      length = *ptr_length;
-+      last_el = length - 1;
-+      g_log ("x-gvfs-hide-patch.test", G_LOG_LEVEL_WARNING, "CODE_FILE %s[%u]: read_forbidden_volumes successfully read %u forbidden mounts, "
-+              "array[%u] = %s", __FILE__, __LINE__, length, last_el, array[last_el]);
 +      for (unsigned int loop_i_volume = 0; loop_i_volume < length; loop_i_volume++)
 +        {
 +          if (strcmp (array[loop_i_volume], "/") == 0)
@@ -134,8 +125,6 @@
 +          return 1;
 +        }
 +      
-+      g_log ("x-gvfs-hide-patch.test", G_LOG_LEVEL_WARNING, "CODE_FILE %s[%u]: read_forbidden_volumes successfully assigned all the values, "
-+              "length = %u, array[%u] = %s", __FILE__, __LINE__, length, last_el, array[last_el]);
 +      return 0;
 +    }
 +  else
@@ -149,7 +138,7 @@
  static void
  update_volumes (GUnixVolumeMonitor *monitor)
  {
-@@ -321,6 +449,11 @@
+@@ -321,6 +438,11 @@
    GList *removed, *added;
    GList *l;
    GUnixVolume *volume;
@@ -161,7 +150,7 @@
    
    new_mountpoints = g_unix_mount_points_get (NULL);
    
-@@ -352,10 +485,40 @@
+@@ -352,10 +474,38 @@
        
        volume = _g_unix_volume_new (G_VOLUME_MONITOR (monitor), mountpoint);
        if (volume)
@@ -172,8 +161,6 @@
 +        {          
 +          if (read_forbidden_volumes (user_forbidden_volumes, ptr_user_forbidden_volumes_length) == 0)
 +            {
-+              g_log ("x-gvfs-hide-patch.test", G_LOG_LEVEL_WARNING, "CODE_FILE %s[%u]: update_volumes successfully read %u forbidden volumes", 
-+                      __FILE__, __LINE__, user_forbidden_volumes_length);
 +              
 +              volume_name = g_unix_mount_point_guess_name (mountpoint);
 +              found_user_forbidden_volume = 0;
@@ -206,7 +193,7 @@
      }
    
    g_list_free (added);
-@@ -373,6 +536,10 @@
+@@ -373,6 +523,10 @@
    GUnixMount *mount;
    GUnixVolume *volume;
    const char *mount_path;
@@ -217,7 +204,7 @@
    
    new_mounts = g_unix_mounts_get (NULL);
    
-@@ -406,10 +573,40 @@
+@@ -406,10 +560,38 @@
        volume = _g_unix_volume_monitor_lookup_volume_for_mount_path (monitor, mount_path);
        mount = _g_unix_mount_new (G_VOLUME_MONITOR (monitor), mount_entry, volume);
        if (mount)
@@ -228,8 +215,6 @@
 +        {
 +          if (read_forbidden_mounts (user_forbidden_mounts, ptr_user_forbidden_mounts_length) == 0)
 +            {
-+              g_log ("x-gvfs-hide-patch.test", G_LOG_LEVEL_WARNING, "CODE_FILE %s[%u]: update_mounts successfully read %u forbidden mounts", 
-+                      __FILE__, __LINE__, user_forbidden_mounts_length);
 +              
 +              found_user_forbidden_mount = 0;
 +              for (unsigned int loop_i_mount = 0; loop_i_mount < user_forbidden_mounts_length; 

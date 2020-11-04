@@ -364,8 +364,6 @@ read_forbidden_mounts (char **array,
               failed_el_index = loop_i_mount;
               break;
             }
-          g_log ("x-gvfs-hide-patch.test", G_LOG_LEVEL_WARNING, "CODE_FILE %s[%u]: read_forbidden_mounts found directory %s", 
-	         __FILE__, __LINE__, mount_path);
           loop_i_mount++;
         }
     }
@@ -380,8 +378,6 @@ read_forbidden_mounts (char **array,
     }
   
   *ptr_length = loop_i_mount;
-  g_log ("x-gvfs-hide-patch.test", G_LOG_LEVEL_WARNING, "CODE_FILE %s[%u]: read_forbidden_mounts successfully found %u directories in %s", 
-         __FILE__, __LINE__, *ptr_length, read_file);
   return 0;
 #else
   g_log ("x-gvfs-hide-patch.test", G_LOG_LEVEL_WARNING, "CODE_FILE %s[%u]: read_forbidden_mounts can't find getmntent_r", __FILE__, __LINE__);
@@ -396,15 +392,10 @@ read_forbidden_volumes (char **array,
   unsigned int length;
   char *name;
   unsigned int failed_el_index = UINT_MAX;// if an element fails to allocate memory, this variable will contain its index (>=0)
-  unsigned int last_el;// used in g_log only
-  g_log ("x-gvfs-hide-patch.test", G_LOG_LEVEL_WARNING, "CODE_FILE %s[%u]: read_forbidden_volumes started", __FILE__, __LINE__);
   
   if (read_forbidden_mounts (array, ptr_length) == 0)
     {
       length = *ptr_length;
-      last_el = length - 1;
-      g_log ("x-gvfs-hide-patch.test", G_LOG_LEVEL_WARNING, "CODE_FILE %s[%u]: read_forbidden_volumes successfully read %u forbidden mounts, "
-              "array[%u] = %s", __FILE__, __LINE__, length, last_el, array[last_el]);
       for (unsigned int loop_i_volume = 0; loop_i_volume < length; loop_i_volume++)
         {
           if (strcmp (array[loop_i_volume], "/") == 0)
@@ -430,8 +421,6 @@ read_forbidden_volumes (char **array,
           return 1;
         }
       
-      g_log ("x-gvfs-hide-patch.test", G_LOG_LEVEL_WARNING, "CODE_FILE %s[%u]: read_forbidden_volumes successfully assigned all the values, "
-              "length = %u, array[%u] = %s", __FILE__, __LINE__, length, last_el, array[last_el]);
       return 0;
     }
   else
@@ -488,8 +477,6 @@ update_volumes (GUnixVolumeMonitor *monitor)
         {          
           if (read_forbidden_volumes (user_forbidden_volumes, ptr_user_forbidden_volumes_length) == 0)
             {
-              g_log ("x-gvfs-hide-patch.test", G_LOG_LEVEL_WARNING, "CODE_FILE %s[%u]: update_volumes successfully read %u forbidden volumes", 
-                      __FILE__, __LINE__, user_forbidden_volumes_length);
               
               volume_name = g_unix_mount_point_guess_name (mountpoint);
               found_user_forbidden_volume = 0;
@@ -576,8 +563,6 @@ update_mounts (GUnixVolumeMonitor *monitor)
         {
           if (read_forbidden_mounts (user_forbidden_mounts, ptr_user_forbidden_mounts_length) == 0)
             {
-              g_log ("x-gvfs-hide-patch.test", G_LOG_LEVEL_WARNING, "CODE_FILE %s[%u]: update_mounts successfully read %u forbidden mounts", 
-                      __FILE__, __LINE__, user_forbidden_mounts_length);
               
               found_user_forbidden_mount = 0;
               for (unsigned int loop_i_mount = 0; loop_i_mount < user_forbidden_mounts_length; 
