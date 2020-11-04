@@ -523,10 +523,6 @@ update_mounts (GUnixVolumeMonitor *monitor)
   GUnixMount *mount;
   GUnixVolume *volume;
   const char *mount_path;
-  char *user_forbidden_mounts[MAX_USER_FORBIDDEN_MOUNTS_LENGTH];
-  unsigned int user_forbidden_mounts_length = sizeof (user_forbidden_mounts) / sizeof (user_forbidden_mounts[0]);
-  unsigned int *ptr_user_forbidden_mounts_length = &user_forbidden_mounts_length;
-  unsigned int found_user_forbidden_mount;
   
   new_mounts = g_unix_mounts_get (NULL);
   
@@ -560,38 +556,10 @@ update_mounts (GUnixVolumeMonitor *monitor)
       volume = _g_unix_volume_monitor_lookup_volume_for_mount_path (monitor, mount_path);
       mount = _g_unix_mount_new (G_VOLUME_MONITOR (monitor), mount_entry, volume);
       if (mount)
-        {
-          if (read_forbidden_mounts (user_forbidden_mounts, ptr_user_forbidden_mounts_length) == 0)
-            {
-              
-              found_user_forbidden_mount = 0;
-              for (unsigned int loop_i_mount = 0; loop_i_mount < user_forbidden_mounts_length; 
-                      loop_i_mount++)
-                {
-                  if (strcmp (mount_path, user_forbidden_mounts[loop_i_mount]) == 0)
-                    found_user_forbidden_mount = 1;
-                  free (user_forbidden_mounts[loop_i_mount]);
-                }    
-              g_log ("x-gvfs-hide-patch.test", G_LOG_LEVEL_WARNING, "CODE_FILE %s[%u]:user %s mount_path: %s", 
-                      __FILE__, __LINE__, found_user_forbidden_mount? "forbidden": "allowed", mount_path);
-            }
-          else
-            {
-              g_log ("x-gvfs-hide-patch.test", G_LOG_LEVEL_WARNING, "CODE_FILE %s[%u]: update_mounts failed to read forbidden mounts", 
-                      __FILE__, __LINE__);
-            }
-          
-          if (found_user_forbidden_mount)
-            // Free the resources that _g_unix_mount_new() might have allocated. 
-            {
-            }
-          else
-            // Do whatever the unpatched code does. 
-            {
-              monitor->mounts = g_list_prepend (monitor->mounts, mount);
-              g_signal_emit_by_name (monitor, "mount-added", mount);
-            }
-	  }
+	{
+	  monitor->mounts = g_list_prepend (monitor->mounts, mount);
+	  g_signal_emit_by_name (monitor, "mount-added", mount);
+	}
     }
   
   g_list_free (added);
