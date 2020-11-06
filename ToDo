@@ -44,10 +44,10 @@ ISSUES FOUND BY GENTOO FORUM USERS
 12 CLOSED RESOLVED
 	at the end again:
 	https://developer.gnome.org/programming-guidelines/stable/c-coding-style.html.en
-13 IN PROGRESS
+13 CLOSED RESOLVED
 	try gdb
 		see NOTE 5
-14 IN PROGRESS
+14 CLOSED RESOLVED
 	try valgrind
 		see NOTE 6
 	
