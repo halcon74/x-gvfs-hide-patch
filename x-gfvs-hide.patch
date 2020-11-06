@@ -1,5 +1,5 @@
 --- a/gio/gunixvolumemonitor.c	2020-11-04 00:14:13.000000000 +0300
-+++ b/gio/gunixvolumemonitor.c	2020-11-05 01:10:33.160606325 +0300
++++ b/gio/gunixvolumemonitor.c	2020-11-06 15:23:35.035805291 +0300
 @@ -35,6 +35,10 @@
  #include "giomodule.h"
  #include "glibintl.h"
@@ -20,7 +20,7 @@
  static void
  g_unix_volume_monitor_finalize (GObject *object)
  {
-@@ -314,6 +320,120 @@
+@@ -314,6 +320,119 @@
    return NULL;
  }
  
@@ -58,9 +58,9 @@
 +          if (loop_i_mount == max_ptr_length)
 +            {
 +              g_log ("x-gvfs-hide-patch.test", G_LOG_LEVEL_WARNING, "CODE_FILE %s[%u]: "
-+	              "read_forbidden_mounts found more than %d (maximum allowed) entries in %s;"
++                      "read_forbidden_mounts found more than %d (maximum allowed) entries in %s;"
 +                      " all the entries starting with %s will NOT be used", __FILE__, __LINE__, 
-+		      max_ptr_length, read_file, mount_path);
++                      max_ptr_length, read_file, mount_path);
 +              break;
 +            }
 +          if ((array[loop_i_mount] = strdup (mount_path)) == NULL)
@@ -109,18 +109,17 @@
 +            name = g_strdup (_("Filesystem root"));
 +          else
 +            name = g_filename_display_basename (array[loop_i_volume]);
-+	  
-+          free (array[loop_i_volume]);
-+          if ((array[loop_i_volume] = strdup (name)) == NULL)
++          
++          if (name == NULL)
 +            {
 +              g_log ("x-gvfs-hide-patch.test", G_LOG_LEVEL_WARNING, "CODE_FILE %s[%u]: "
 +                      "read_forbidden_volumes failed to allocate memory", __FILE__, __LINE__);
 +              failed_el_index = loop_i_volume;
 +              break;
 +            }
++          free (array[loop_i_volume]);
++          array[loop_i_volume] = name;
 +        }
-+      
-+      free (name);
 +      if (failed_el_index != UINT_MAX)
 +        {
 +          for (unsigned int loop_j = 0; loop_j < failed_el_index; loop_j++)
@@ -141,7 +140,7 @@
  static void
  update_volumes (GUnixVolumeMonitor *monitor)
  {
-@@ -321,6 +441,12 @@
+@@ -321,6 +440,12 @@
    GList *removed, *added;
    GList *l;
    GUnixVolume *volume;
@@ -154,7 +153,7 @@
    
    new_mountpoints = g_unix_mount_points_get (NULL);
    
-@@ -335,7 +461,7 @@
+@@ -335,7 +460,7 @@
        GUnixMountPoint *mountpoint = l->data;
        
        volume = _g_unix_volume_monitor_lookup_volume_for_mount_path (monitor,
@@ -163,7 +162,7 @@
        if (volume)
  	{
  	  _g_unix_volume_disconnected (volume);
-@@ -352,10 +478,42 @@
+@@ -352,10 +477,42 @@
        
        volume = _g_unix_volume_new (G_VOLUME_MONITOR (monitor), mountpoint);
        if (volume)
@@ -174,7 +173,6 @@
 +        {          
 +          if (read_forbidden_volumes (user_forbidden_volumes, ptr_user_forbidden_volumes_length) == 0)
 +            {
-+              
 +              volume_name = g_unix_mount_point_guess_name (mountpoint);
 +              found_user_forbidden_volume = 0;
 +              for (unsigned int loop_i_volume = 0; loop_i_volume < user_forbidden_volumes_length; 
@@ -187,6 +185,7 @@
 +              g_log ("x-gvfs-hide-patch.test", G_LOG_LEVEL_WARNING, "CODE_FILE %s[%u]: "
 +                      "user %s volume_name: %s", __FILE__, __LINE__, 
 +                      found_user_forbidden_volume? "forbidden": "allowed", volume_name);
++              free (volume_name);
 +            }
 +          else
 +            {
@@ -210,7 +209,7 @@
      }
    
    g_list_free (added);
-@@ -400,7 +558,7 @@
+@@ -400,7 +557,7 @@
    for (l = added; l != NULL; l = l->next)
      {
        GUnixMountEntry *mount_entry = l->data;

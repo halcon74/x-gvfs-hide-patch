@@ -354,9 +354,9 @@ read_forbidden_mounts (char **array,
           if (loop_i_mount == max_ptr_length)
             {
               g_log ("x-gvfs-hide-patch.test", G_LOG_LEVEL_WARNING, "CODE_FILE %s[%u]: "
-	              "read_forbidden_mounts found more than %d (maximum allowed) entries in %s;"
+                      "read_forbidden_mounts found more than %d (maximum allowed) entries in %s;"
                       " all the entries starting with %s will NOT be used", __FILE__, __LINE__, 
-		      max_ptr_length, read_file, mount_path);
+                      max_ptr_length, read_file, mount_path);
               break;
             }
           if ((array[loop_i_mount] = strdup (mount_path)) == NULL)
@@ -405,18 +405,17 @@ read_forbidden_volumes (char **array,
             name = g_strdup (_("Filesystem root"));
           else
             name = g_filename_display_basename (array[loop_i_volume]);
-	  
-          free (array[loop_i_volume]);
-          if ((array[loop_i_volume] = strdup (name)) == NULL)
+          
+          if (name == NULL)
             {
               g_log ("x-gvfs-hide-patch.test", G_LOG_LEVEL_WARNING, "CODE_FILE %s[%u]: "
                       "read_forbidden_volumes failed to allocate memory", __FILE__, __LINE__);
               failed_el_index = loop_i_volume;
               break;
             }
+          free (array[loop_i_volume]);
+          array[loop_i_volume] = name;
         }
-      
-      free (name);
       if (failed_el_index != UINT_MAX)
         {
           for (unsigned int loop_j = 0; loop_j < failed_el_index; loop_j++)
@@ -481,7 +480,6 @@ update_volumes (GUnixVolumeMonitor *monitor)
         {          
           if (read_forbidden_volumes (user_forbidden_volumes, ptr_user_forbidden_volumes_length) == 0)
             {
-              
               volume_name = g_unix_mount_point_guess_name (mountpoint);
               found_user_forbidden_volume = 0;
               for (unsigned int loop_i_volume = 0; loop_i_volume < user_forbidden_volumes_length; 
@@ -494,6 +492,7 @@ update_volumes (GUnixVolumeMonitor *monitor)
               g_log ("x-gvfs-hide-patch.test", G_LOG_LEVEL_WARNING, "CODE_FILE %s[%u]: "
                       "user %s volume_name: %s", __FILE__, __LINE__, 
                       found_user_forbidden_volume? "forbidden": "allowed", volume_name);
+              free (volume_name);
             }
           else
             {
