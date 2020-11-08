@@ -410,7 +410,6 @@ read_forbidden_volumes (char **array,
               break;
             }
           free (array[loop_i_volume]);
-          array[loop_i_volume] = NULL;
           array[loop_i_volume] = name;
         }
 	
@@ -434,11 +433,11 @@ update_volumes (GUnixVolumeMonitor *monitor)
   GList *removed, *added;
   GList *l;
   GUnixVolume *volume;
-  char *user_forbidden_volumes[MAX_USER_FORBIDDEN_MOUNTS_LENGTH] = {};
+  char *user_forbidden_volumes[MAX_USER_FORBIDDEN_MOUNTS_LENGTH] = {NULL};
   unsigned int user_forbidden_volumes_length = sizeof (user_forbidden_volumes) 
           / sizeof (user_forbidden_volumes[0]);
   unsigned int *ptr_user_forbidden_volumes_length = &user_forbidden_volumes_length;
-  const char *volume_name;
+  char *volume_name;
   unsigned int found_user_forbidden_volume;
   
   new_mountpoints = g_unix_mount_points_get (NULL);

@@ -1,5 +1,5 @@
 --- a/gio/gunixvolumemonitor.c	2020-11-04 00:14:13.000000000 +0300
-+++ b/gio/gunixvolumemonitor.c	2020-11-08 03:15:49.333102720 +0300
++++ b/gio/gunixvolumemonitor.c	2020-11-08 18:08:06.683615289 +0300
 @@ -35,6 +35,10 @@
  #include "giomodule.h"
  #include "glibintl.h"
@@ -20,7 +20,7 @@
  static void
  g_unix_volume_monitor_finalize (GObject *object)
  {
-@@ -314,6 +320,113 @@
+@@ -314,6 +320,112 @@
    return NULL;
  }
  
@@ -114,7 +114,6 @@
 +              break;
 +            }
 +          free (array[loop_i_volume]);
-+          array[loop_i_volume] = NULL;
 +          array[loop_i_volume] = name;
 +        }
 +	
@@ -134,20 +133,20 @@
  static void
  update_volumes (GUnixVolumeMonitor *monitor)
  {
-@@ -321,6 +434,12 @@
+@@ -321,6 +433,12 @@
    GList *removed, *added;
    GList *l;
    GUnixVolume *volume;
-+  char *user_forbidden_volumes[MAX_USER_FORBIDDEN_MOUNTS_LENGTH] = {};
++  char *user_forbidden_volumes[MAX_USER_FORBIDDEN_MOUNTS_LENGTH] = {NULL};
 +  unsigned int user_forbidden_volumes_length = sizeof (user_forbidden_volumes) 
 +          / sizeof (user_forbidden_volumes[0]);
 +  unsigned int *ptr_user_forbidden_volumes_length = &user_forbidden_volumes_length;
-+  const char *volume_name;
++  char *volume_name;
 +  unsigned int found_user_forbidden_volume;
    
    new_mountpoints = g_unix_mount_points_get (NULL);
    
-@@ -335,7 +454,7 @@
+@@ -335,7 +453,7 @@
        GUnixMountPoint *mountpoint = l->data;
        
        volume = _g_unix_volume_monitor_lookup_volume_for_mount_path (monitor,
@@ -156,7 +155,7 @@
        if (volume)
  	{
  	  _g_unix_volume_disconnected (volume);
-@@ -352,10 +471,52 @@
+@@ -352,10 +470,52 @@
        
        volume = _g_unix_volume_new (G_VOLUME_MONITOR (monitor), mountpoint);
        if (volume)
@@ -213,7 +212,7 @@
      }
    
    g_list_free (added);
-@@ -400,7 +561,7 @@
+@@ -400,7 +560,7 @@
    for (l = added; l != NULL; l = l->next)
      {
        GUnixMountEntry *mount_entry = l->data;
