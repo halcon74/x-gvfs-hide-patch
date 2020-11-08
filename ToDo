@@ -50,7 +50,10 @@ ISSUES FOUND BY GENTOO FORUM USERS
 14 CLOSED RESOLVED
 	try valgrind
 		see NOTE 6
-	
+20
+	Simulate RAII (Resource Acquisition Is Initialization) pattern
+	https://en.wikipedia.org/wiki/Resource_acquisition_is_initialization
+
 ======================
 ISSUES FOUND BY MY OWN
 ======================

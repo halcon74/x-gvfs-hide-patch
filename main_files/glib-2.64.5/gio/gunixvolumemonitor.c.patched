@@ -373,11 +373,7 @@ read_forbidden_mounts (char **array,
   endmntent (file);
 
   if (failed_el_index != UINT_MAX)
-    {
-      for (unsigned int loop_j = 0; loop_j < failed_el_index; loop_j++)
-        free (array[loop_j]);
-      return 1;
-    }
+    return 1;
   
   *ptr_length = loop_i_mount;
   return 0;
@@ -414,14 +410,12 @@ read_forbidden_volumes (char **array,
               break;
             }
           free (array[loop_i_volume]);
+          array[loop_i_volume] = NULL;
           array[loop_i_volume] = name;
         }
+	
       if (failed_el_index != UINT_MAX)
-        {
-          for (unsigned int loop_j = 0; loop_j < failed_el_index; loop_j++)
-            free (array[loop_j]);
-          return 1;
-        }
+        return 1;
       
       return 0;
     }
@@ -440,7 +434,7 @@ update_volumes (GUnixVolumeMonitor *monitor)
   GList *removed, *added;
   GList *l;
   GUnixVolume *volume;
-  char *user_forbidden_volumes[MAX_USER_FORBIDDEN_MOUNTS_LENGTH];
+  char *user_forbidden_volumes[MAX_USER_FORBIDDEN_MOUNTS_LENGTH] = {};
   unsigned int user_forbidden_volumes_length = sizeof (user_forbidden_volumes) 
           / sizeof (user_forbidden_volumes[0]);
   unsigned int *ptr_user_forbidden_volumes_length = &user_forbidden_volumes_length;
@@ -485,9 +479,12 @@ update_volumes (GUnixVolumeMonitor *monitor)
               for (unsigned int loop_i_volume = 0; loop_i_volume < user_forbidden_volumes_length; 
                       loop_i_volume++)
                 {
-                  if (!found_user_forbidden_volume && strcmp (volume_name, user_forbidden_volumes[loop_i_volume]) == 0)
-                    found_user_forbidden_volume = 1;
-		  free (user_forbidden_volumes[loop_i_volume]);
+                  if (!found_user_forbidden_volume 
+                          && strcmp (volume_name, user_forbidden_volumes[loop_i_volume]) == 0)
+                    {
+                      found_user_forbidden_volume = 1;
+                    }
+
                 }
               g_log ("x-gvfs-hide-patch.test", G_LOG_LEVEL_WARNING, "CODE_FILE %s[%u]: "
                       "user %s volume_name: %s", __FILE__, __LINE__, 
@@ -499,6 +496,13 @@ update_volumes (GUnixVolumeMonitor *monitor)
               g_log ("x-gvfs-hide-patch.test", G_LOG_LEVEL_WARNING, "CODE_FILE %s[%u]: "
                       "update_volumes failed to read forbidden volumes", __FILE__, __LINE__);
             }
+	  
+	   for (unsigned int loop_i_volume = 0; loop_i_volume < MAX_USER_FORBIDDEN_MOUNTS_LENGTH; 
+                      loop_i_volume++)
+	     {
+	       free (user_forbidden_volumes[loop_i_volume]);
+	       user_forbidden_volumes[loop_i_volume] = NULL;
+	     }
           
           if (found_user_forbidden_volume)
             // Free the resources that _g_unix_volume_new () allocated
