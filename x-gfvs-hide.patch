@@ -223,15 +223,16 @@
        volume = _g_unix_volume_monitor_lookup_volume_for_mount_path (monitor, mount_path);
 --- a/gio/gunixmounts.h	2020-11-04 01:33:38.000000000 +0300
 +++ b/gio/gunixmounts.h	2020-11-04 01:37:00.000000000 +0300
-@@ -64,6 +64,8 @@
- #define G_IS_UNIX_MOUNT_MONITOR_CLASS(k) (G_TYPE_CHECK_CLASS_TYPE ((k), G_TYPE_UNIX_MOUNT_MONITOR))
- G_DEFINE_AUTOPTR_CLEANUP_FUNC(GUnixMountMonitor, g_object_unref)
+@@ -55,6 +55,9 @@
+                                            GUnixVolume     *volume);
+ void         _g_unix_mount_unmounted      (GUnixMount      *mount);
  
 +GLIB_AVAILABLE_IN_2_64
 +char *   get_fstab_file            (void);
- GLIB_AVAILABLE_IN_ALL
- void           g_unix_mount_free                    (GUnixMountEntry    *mount_entry);
- GLIB_AVAILABLE_IN_2_54
++
+ G_END_DECLS
+ 
+ #endif /* __G_UNIX_MOUNT_H__ */
 --- a/gio/gunixmounts.c	2020-11-04 01:38:57.000000000 +0300
 +++ b/gio/gunixmounts.c	2020-11-04 01:37:49.000000000 +0300
 @@ -968,7 +968,7 @@
